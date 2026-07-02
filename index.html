@@ -3,233 +3,327 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Nordic Info</title>
-<meta name="description" content="Informationsplatform bygget af Nordic Operations">
-<meta name="theme-color" content="#28513F">
+<title>Nordic Media</title>
+<meta name="description" content="Nyt der betyder noget — informationsplatform bygget af Nordic Operations.">
+<meta property="og:title" content="Nordic Media">
+<meta property="og:description" content="Nyt der betyder noget.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0F1B3D">
+<meta name="color-scheme" content="light dark">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="config.js"></script>
 
 <style>
 /* ============================================================
-   TOKENS — Nordic Info design-system
+   TOKENS — sættes dynamisk fra config.js, defaults nedenfor
    ============================================================ */
 :root{
-  --paper:#FAFAF7; --paper-warm:#F3EFE7; --ink:#1C1F1D; --ink-soft:#5B615C;
-  --pine:#28513F; --pine-strong:#1C3B2D; --pine-soft:#E7EEE9;
-  --gold:#C9A24B; --line:#E4E1D8; --card:#FFFFFF;
-  --danger:#B3432B; --radius:20px; --radius-sm:12px;
-  --shadow:0 1px 2px rgba(28,31,29,.04), 0 8px 24px -12px rgba(28,31,29,.12);
-  --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif;
+  --primary:#2B4EFF; --primary-deep:#0F1B3D; --secondary:#FFFFFF;
+  --accent:#17B26A; --accent2:#8B5CF6; --accent3:#F5487F; --accent4:#F5A524;
+  --mist:#F3F5FA;
+  --ink:#0B1220; --ink-soft:#5A6478; --line:rgba(11,18,32,.09);
+  --card:#FFFFFF; --glass:rgba(255,255,255,.68); --glass-line:rgba(255,255,255,.5);
+  --radius-xl:28px; --radius-lg:22px; --radius-md:16px; --radius-sm:12px;
+  --shadow-soft:0 2px 6px rgba(15,27,61,.05), 0 18px 40px -20px rgba(15,27,61,.18);
+  --shadow-lift:0 10px 30px -8px rgba(15,27,61,.28);
+  --font-display:'Manrope',sans-serif; --font-body:'Inter',sans-serif;
   --safe-bottom:env(safe-area-inset-bottom,0px);
+  --ease:cubic-bezier(.22,.9,.34,1);
 }
 [data-theme="dark"]{
-  --paper:#14171A; --paper-warm:#191D20; --ink:#F1F0EA; --ink-soft:#9CA39E;
-  --pine:#5C9A80; --pine-strong:#7FB79C; --pine-soft:#1E2B25;
-  --gold:#D9BB74; --line:#2A2E31; --card:#1D2124;
-  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  --secondary:#121A2E; --mist:#0A0F1E;
+  --ink:#EEF1FB; --ink-soft:#9AA4C0; --line:rgba(238,241,251,.08);
+  --card:#121A2E; --glass:rgba(18,26,46,.66); --glass-line:rgba(255,255,255,.08);
+  --shadow-soft:0 2px 6px rgba(0,0,0,.3), 0 18px 40px -20px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-html,body{margin:0; padding:0; height:100%;}
-body{
-  background:var(--paper); color:var(--ink); font-family:var(--font-body);
-  -webkit-font-smoothing:antialiased; transition:background .25s ease, color .25s ease;
-  overscroll-behavior-y:none;
-}
-h1,h2,h3,.display{font-family:var(--font-display); font-weight:600; letter-spacing:-.01em; margin:0;}
+html,body{margin:0; height:100%;}
+body{background:var(--mist); color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased; overscroll-behavior-y:none; transition:background .3s var(--ease), color .3s var(--ease);}
+h1,h2,h3,.display{font-family:var(--font-display); font-weight:800; letter-spacing:-.02em; margin:0;}
 p{margin:0;}
-a{color:inherit;}
 button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
 img,video{display:block; max-width:100%;}
-:focus-visible{outline:3px solid var(--gold); outline-offset:2px; border-radius:4px;}
+:focus-visible{outline:3px solid var(--accent4); outline-offset:2px; border-radius:6px;}
 .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
-.skip-link{position:absolute; top:-100px; left:12px; background:var(--pine); color:#fff; padding:10px 16px; border-radius:var(--radius-sm); z-index:1000; transition:top .2s;}
+.skip-link{position:absolute; top:-100px; left:12px; background:var(--primary); color:#fff; padding:10px 16px; border-radius:var(--radius-sm); z-index:1000; transition:top .2s;}
 .skip-link:focus{top:12px;}
+.icon{width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none;}
 
 /* ---------- App shell ---------- */
-#app{max-width:560px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; position:relative;}
+#app{max-width:600px; margin:0 auto; min-height:100vh; position:relative;}
 
-/* ---------- Header ---------- */
+/* ---------- Header (glass) ---------- */
 header.topbar{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 16px 10px; position:sticky; top:0; z-index:40;
-  background:color-mix(in srgb, var(--paper) 88%, transparent);
-  backdrop-filter:blur(10px); border-bottom:1px solid transparent;
+  position:sticky; top:0; z-index:40; display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; background:var(--glass); backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%); border-bottom:1px solid transparent; transition:border-color .2s;
 }
 header.topbar.scrolled{border-bottom-color:var(--line);}
-.brand{display:flex; align-items:center; gap:8px; opacity:.85;}
-.brand .mark{width:26px; height:26px; border-radius:8px; background:var(--pine); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-weight:700; font-size:14px;}
-.brand .name{font-size:13px; font-weight:600; letter-spacing:.01em; color:var(--ink-soft);}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand .mark{width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg,var(--primary),var(--primary-deep)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-weight:800; font-size:15px; box-shadow:var(--shadow-soft);}
+.brand .mark img{width:100%; height:100%; object-fit:contain; border-radius:10px;}
+.brand .name{font-family:var(--font-display); font-weight:800; font-size:16px;}
 .topbar-actions{display:flex; gap:4px;}
-.icon-btn{width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--ink-soft); transition:background .15s;}
-.icon-btn:hover, .icon-btn:active{background:var(--pine-soft); color:var(--pine);}
+.icon-btn{width:40px; height:40px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); transition:.2s var(--ease);}
+.icon-btn:hover, .icon-btn:active{background:var(--line); color:var(--primary); transform:translateY(-1px);}
 
 /* ---------- Category chips ---------- */
-.chip-row{display:flex; gap:8px; overflow-x:auto; padding:2px 16px 14px; scrollbar-width:none;}
+.chip-row{display:flex; gap:8px; overflow-x:auto; padding:14px 20px 18px; scrollbar-width:none;}
 .chip-row::-webkit-scrollbar{display:none;}
-.chip{flex:0 0 auto; padding:8px 16px; border-radius:999px; background:var(--paper-warm); color:var(--ink-soft); font-size:13.5px; font-weight:600; border:1px solid var(--line); white-space:nowrap; transition:.15s;}
-.chip[aria-pressed="true"]{background:var(--pine); color:#fff; border-color:var(--pine);}
+.chip{flex:0 0 auto; padding:9px 18px; border-radius:999px; background:var(--card); color:var(--ink-soft); font-size:13.5px; font-weight:700; border:1px solid var(--line); white-space:nowrap; transition:.2s var(--ease);}
+.chip[aria-pressed="true"]{background:var(--primary); color:#fff; border-color:var(--primary); box-shadow:var(--shadow-soft);}
 
 /* ---------- Views ---------- */
-main{flex:1; padding-bottom:calc(84px + var(--safe-bottom));}
-.view{display:none; animation:fadeIn .3s ease;}
-.view.active{display:block;}
-@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+main{padding-bottom:calc(96px + var(--safe-bottom));}
+.view{display:none;}
+.view.active{display:block; animation:viewIn .4s var(--ease);}
+@keyframes viewIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+.section-head{display:flex; align-items:center; justify-content:space-between; padding:4px 20px 12px;}
+.section-head h3{font-size:19px;}
+.section-head .see-all{font-size:13px; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:4px;}
 
-/* ---------- Feed ---------- */
-.feed{display:flex; flex-direction:column; gap:20px; padding:4px 16px 8px;}
-.card{
-  background:var(--card); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
-  border:1px solid var(--line); opacity:0; transform:translateY(16px) scale(.98);
-  transition:opacity .5s ease, transform .5s ease;
-}
+/* ---------- Hero carousel ---------- */
+.hero-wrap{padding:4px 20px 22px;}
+.hero-scroller{display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; border-radius:var(--radius-xl);}
+.hero-scroller::-webkit-scrollbar{display:none;}
+.hero-card{flex:0 0 100%; scroll-snap-align:start; position:relative; border-radius:var(--radius-xl); overflow:hidden; aspect-ratio:4/5; background:var(--primary-deep); box-shadow:var(--shadow-lift);}
+.hero-card img, .hero-card video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+.hero-card .scrim{position:absolute; inset:0; background:linear-gradient(0deg, rgba(6,10,24,.88) 0%, rgba(6,10,24,.35) 45%, rgba(6,10,24,0) 68%);}
+.hero-card .content{position:absolute; left:0; right:0; bottom:0; padding:26px 24px 28px; color:#fff;}
+.tag{display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; font-size:11.5px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; margin-bottom:10px;}
+.hero-card h2{font-size:26px; line-height:1.18; margin-bottom:10px; color:#fff;}
+.hero-card .excerpt{font-size:14.5px; color:rgba(255,255,255,.8); line-height:1.5; margin-bottom:16px; max-width:92%;}
+.pill-btn{display:inline-flex; align-items:center; gap:8px; background:#fff; color:var(--primary-deep); font-weight:800; font-size:14px; padding:11px 20px; border-radius:999px; transition:.2s var(--ease);}
+.pill-btn:hover{transform:translateY(-2px); box-shadow:var(--shadow-lift);}
+.dots{display:flex; gap:6px; justify-content:center; margin-top:12px;}
+.dots span{width:6px; height:6px; border-radius:50%; background:var(--line); transition:.25s;}
+.dots span.active{width:18px; background:var(--primary);}
+
+/* ---------- "Det sker" mini kort ---------- */
+.mini-scroller{display:flex; gap:12px; overflow-x:auto; padding:0 20px 24px; scrollbar-width:none;}
+.mini-scroller::-webkit-scrollbar{display:none;}
+.mini-card{flex:0 0 148px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:16px; box-shadow:var(--shadow-soft); transition:.25s var(--ease);}
+.mini-card:active{transform:scale(.97);}
+.mini-date{width:44px; height:44px; border-radius:13px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; margin-bottom:12px;}
+.mini-date .d{font-family:var(--font-display); font-weight:800; font-size:16px; line-height:1;}
+.mini-date .m{font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em;}
+.mini-card .t{font-size:13.5px; font-weight:700; line-height:1.3; margin-bottom:6px;}
+.mini-card .time{font-size:11.5px; color:var(--ink-soft); font-weight:600;}
+
+/* ---------- Premium feed cards ---------- */
+.feed{display:flex; flex-direction:column; gap:18px; padding:0 20px 8px;}
+.card{background:var(--card); border-radius:var(--radius-xl); overflow:hidden; box-shadow:var(--shadow-soft); border:1px solid var(--line); opacity:0; transform:translateY(18px) scale(.98); transition:opacity .55s var(--ease), transform .55s var(--ease), box-shadow .25s var(--ease);}
 .card.in-view{opacity:1; transform:none;}
-.card .media{width:100%; aspect-ratio:4/3; background:var(--pine-soft) center/cover no-repeat; position:relative;}
+.card:hover{box-shadow:var(--shadow-lift); transform:translateY(-3px);}
+.card .media{width:100%; aspect-ratio:16/11; background:var(--mist) center/cover no-repeat; position:relative;}
 .card .media video{width:100%; height:100%; object-fit:cover;}
-.card .media .play{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.15);}
-.card .media .play span{width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--pine);}
-.card .badge{position:absolute; top:12px; left:12px; background:rgba(20,23,20,.55); color:#fff; font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:999px; backdrop-filter:blur(4px);}
-.card .body{padding:16px 18px 18px;}
-.card .eyebrow{font-size:12px; color:var(--pine); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
-.card h2{font-size:21px; line-height:1.25; margin-bottom:6px;}
-.card .excerpt{font-size:14.5px; color:var(--ink-soft); line-height:1.5; margin-bottom:14px;}
+.card .play-overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(6,10,24,.14);}
+.card .play-overlay .ring{width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,.95); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-soft);}
+.card .play-overlay .ring .icon{width:22px; height:22px; color:var(--primary-deep);}
+.card .duration{position:absolute; right:12px; bottom:12px; background:rgba(6,10,24,.65); color:#fff; font-size:11px; font-weight:700; padding:3px 8px; border-radius:8px;}
+.card .body{padding:18px 20px 20px;}
+.card .meta-row{display:flex; align-items:center; gap:8px; margin-bottom:9px;}
+.card .date{font-size:12px; color:var(--ink-soft); font-weight:600;}
+.card h2{font-size:19.5px; line-height:1.25; margin-bottom:7px;}
+.card .excerpt{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:16px;}
 .card .row{display:flex; align-items:center; justify-content:space-between;}
-.readmore{display:inline-flex; align-items:center; gap:6px; background:var(--pine-soft); color:var(--pine); font-weight:700; font-size:13.5px; padding:9px 16px; border-radius:999px; transition:.15s;}
-.readmore:hover{background:var(--pine); color:#fff;}
+.readmore{display:inline-flex; align-items:center; gap:6px; color:var(--primary); font-weight:800; font-size:13.5px;}
+.readmore .icon{width:17px; height:17px; transition:transform .2s var(--ease);}
+.readmore:hover .icon{transform:translateX(3px);}
 .card-actions{display:flex; gap:2px;}
-.card-actions .icon-btn{width:34px; height:34px; font-size:16px;}
-.empty-state{padding:60px 24px; text-align:center; color:var(--ink-soft);}
-.empty-state .glyph{font-size:34px; margin-bottom:10px;}
+.circle-btn{width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--mist); color:var(--ink-soft); transition:.2s;}
+.circle-btn:hover{background:var(--line); color:var(--primary);}
+.circle-btn .icon{width:17px; height:17px;}
+.empty-state{padding:70px 24px; text-align:center; color:var(--ink-soft);}
+.empty-state .icon{width:38px; height:38px; margin:0 auto 14px; opacity:.5;}
 
-/* ---------- Post detail (overlay) ---------- */
-.sheet{position:fixed; inset:0; z-index:100; background:var(--paper); display:none; overflow-y:auto; -webkit-overflow-scrolling:touch;}
-.sheet.open{display:block; animation:slideUp .3s ease;}
-@keyframes slideUp{from{transform:translateY(24px); opacity:0;} to{transform:none; opacity:1;}}
-.sheet-header{position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; padding:14px 16px; background:color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter:blur(10px); z-index:5;}
-.sheet .hero-media{width:100%; max-height:52vh; object-fit:cover; background:var(--pine-soft);}
-.sheet-content{padding:20px 20px 60px; max-width:560px; margin:0 auto;}
-.sheet-content h1{font-size:27px; line-height:1.2; margin-bottom:10px;}
-.sheet-content .meta{color:var(--ink-soft); font-size:13px; margin-bottom:18px;}
-.sheet-content .prose{font-size:16px; line-height:1.7; color:var(--ink);}
-.sheet-content .prose p{margin-bottom:14px;}
-.comments{margin-top:32px; border-top:1px solid var(--line); padding-top:20px;}
-.comment{padding:12px 0; border-bottom:1px solid var(--line); font-size:14.5px;}
-.comment .who{font-weight:700; font-size:13px; color:var(--pine); margin-bottom:3px;}
-.comment-form{display:flex; gap:8px; margin-top:14px;}
-.comment-form input{flex:1; padding:11px 14px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:14px;}
+/* ---------- Video-univers ---------- */
+.video-hero{margin:0 20px 20px; border-radius:var(--radius-xl); overflow:hidden; position:relative; aspect-ratio:16/10; background:var(--primary-deep); box-shadow:var(--shadow-lift);}
+.video-hero video, .video-hero img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+.video-hero .scrim{position:absolute; inset:0; background:linear-gradient(0deg, rgba(6,10,24,.85), rgba(6,10,24,.1) 55%);}
+.video-hero .center-play{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;}
+.video-hero .center-play .ring{width:68px; height:68px; border-radius:50%; background:rgba(255,255,255,.95); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-lift);}
+.video-hero .center-play .icon{width:26px; height:26px; color:var(--primary-deep);}
+.video-hero .info{position:absolute; left:0; right:0; bottom:0; padding:22px 24px; color:#fff;}
+.video-hero .info h2{font-size:21px; color:#fff; margin-bottom:6px;}
+.video-hero .info .meta{font-size:12.5px; color:rgba(255,255,255,.75);}
+.video-list{display:flex; flex-direction:column; gap:4px; padding:4px 20px 8px;}
+.video-row{display:flex; gap:14px; align-items:center; padding:12px 4px; border-radius:var(--radius-md); transition:.2s;}
+.video-row:hover{background:var(--card);}
+.video-row .thumb{position:relative; width:104px; aspect-ratio:16/10; border-radius:var(--radius-sm); overflow:hidden; background:var(--mist); flex:none;}
+.video-row .thumb img, .video-row .thumb video{width:100%; height:100%; object-fit:cover;}
+.video-row .thumb .mini-play{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(6,10,24,.2);}
+.video-row .thumb .mini-play .icon{width:14px; height:14px; color:#fff;}
+.video-row .thumb .dur{position:absolute; right:5px; bottom:5px; background:rgba(6,10,24,.7); color:#fff; font-size:9.5px; font-weight:700; padding:2px 5px; border-radius:5px;}
+.video-row .t{font-size:14.5px; font-weight:700; line-height:1.3; margin-bottom:4px;}
+.video-row .s{font-size:12px; color:var(--ink-soft);}
 
-/* ---------- Bottom nav ---------- */
-nav.tabbar{
-  position:fixed; bottom:0; left:0; right:0; z-index:50; max-width:560px; margin:0 auto;
-  display:flex; background:color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter:blur(14px);
-  border-top:1px solid var(--line); padding:6px 4px calc(6px + var(--safe-bottom));
-}
-nav.tabbar button{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 2px 6px; border-radius:14px; color:var(--ink-soft);}
-nav.tabbar button .ic{font-size:21px;}
-nav.tabbar button .lb{font-size:10.5px; font-weight:600;}
-nav.tabbar button[aria-current="page"]{color:var(--pine);}
-nav.tabbar button[aria-current="page"] .ic{transform:translateY(-1px);}
+/* ---------- Kalender: kortgrid ---------- */
+.event-grid{display:grid; grid-template-columns:1fr; gap:16px; padding:0 20px 8px;}
+.event-card{background:var(--card); border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-soft); display:flex; transition:.25s var(--ease);}
+.event-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-lift);}
+.event-card .datebadge{flex:none; width:78px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff;}
+.event-card .datebadge .d{font-family:var(--font-display); font-weight:800; font-size:26px; line-height:1;}
+.event-card .datebadge .m{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin-top:2px;}
+.event-card .info{padding:16px 18px; flex:1; min-width:0;}
+.event-card .t{font-size:16px; font-weight:700; margin-bottom:8px; line-height:1.3;}
+.event-card .row2{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-soft); margin-bottom:4px;}
+.event-card .row2 .icon{width:14px; height:14px;}
 
-/* ---------- FAB (nyt opslag) ---------- */
-.fab{position:fixed; right:16px; bottom:calc(84px + var(--safe-bottom)); z-index:60; width:56px; height:56px; border-radius:50%; background:var(--pine); color:#fff; font-size:26px; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px -8px rgba(40,81,63,.55); max-width:calc(560px - 32px);}
-.fab:active{transform:scale(.94);}
+/* ---------- Post-detalje (sheet) ---------- */
+.sheet{position:fixed; inset:0; z-index:100; background:var(--mist); display:none; overflow-y:auto; -webkit-overflow-scrolling:touch;}
+.sheet.open{display:block; animation:sheetIn .35s var(--ease);}
+@keyframes sheetIn{from{transform:translateY(28px); opacity:0;} to{transform:none; opacity:1;}}
+.sheet-header{position:sticky; top:0; z-index:5; display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:var(--glass); backdrop-filter:blur(18px);}
+.sheet .hero-media{width:100%; max-height:50vh; object-fit:cover; background:var(--primary-deep);}
+.sheet-content{padding:24px 22px 60px; max-width:600px; margin:0 auto;}
+.sheet-content h1{font-size:29px; line-height:1.18; margin-bottom:12px;}
+.sheet-content .meta{color:var(--ink-soft); font-size:13px; margin-bottom:20px; display:flex; align-items:center; gap:8px;}
+.sheet-content .prose{font-size:16.5px; line-height:1.75;}
+.sheet-content .prose p{margin-bottom:15px;}
+.comments{margin-top:34px; border-top:1px solid var(--line); padding-top:22px;}
+.comments h3{font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:14px; font-weight:700;}
+.comment{padding:13px 0; border-bottom:1px solid var(--line); font-size:14.5px;}
+.comment .who{font-weight:700; font-size:13px; color:var(--primary); margin-bottom:3px;}
+.comment-form{display:flex; gap:8px; margin-top:16px;}
+.comment-form input{flex:1; padding:12px 16px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:14px;}
+.comment-form button{width:42px; height:42px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; flex:none;}
+
+/* ---------- Bottom nav (glass) ---------- */
+nav.tabbar{position:fixed; bottom:0; left:0; right:0; z-index:50; max-width:600px; margin:0 auto; display:flex; background:var(--glass); backdrop-filter:blur(20px) saturate(160%); border-top:1px solid var(--glass-line); padding:8px 6px calc(8px + var(--safe-bottom));}
+nav.tabbar button{flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 2px 6px; border-radius:16px; color:var(--ink-soft); transition:.2s var(--ease);}
+nav.tabbar button .icon{width:22px; height:22px; transition:transform .25s var(--ease);}
+nav.tabbar button .lb{font-size:10.5px; font-weight:700;}
+nav.tabbar button[aria-current="page"]{color:var(--primary);}
+nav.tabbar button[aria-current="page"] .icon{transform:translateY(-2px) scale(1.08);}
+
+/* ---------- FAB ---------- */
+.fab{position:fixed; right:18px; bottom:calc(92px + var(--safe-bottom)); z-index:60; width:58px; height:58px; border-radius:20px; background:linear-gradient(135deg,var(--primary),var(--primary-deep)); color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-lift); transition:.2s var(--ease);}
+.fab .icon{width:24px; height:24px;}
+.fab:active{transform:scale(.93);}
 
 /* ---------- Modals ---------- */
-.modal-backdrop{position:fixed; inset:0; background:rgba(20,23,20,.5); z-index:200; display:none; align-items:flex-end; justify-content:center;}
-.modal-backdrop.open{display:flex; animation:fadeIn .2s ease;}
-.modal{background:var(--paper); width:100%; max-width:560px; max-height:92vh; overflow-y:auto; border-radius:24px 24px 0 0; padding:20px 20px calc(28px + var(--safe-bottom));}
-.modal h2{font-size:20px; margin-bottom:16px;}
-.field{margin-bottom:14px;}
-.field label{display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em;}
-.field input[type=text], .field input[type=email], .field textarea, .field select{
-  width:100%; padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:15px; font-family:inherit;
-}
+.modal-backdrop{position:fixed; inset:0; background:rgba(6,10,24,.45); backdrop-filter:blur(2px); z-index:200; display:none; align-items:flex-end; justify-content:center;}
+.modal-backdrop.open{display:flex; animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+.modal{background:var(--mist); width:100%; max-width:600px; max-height:92vh; overflow-y:auto; border-radius:28px 28px 0 0; padding:22px 22px calc(30px + var(--safe-bottom)); animation:sheetIn .3s var(--ease);}
+.modal h2{font-size:21px; margin-bottom:18px;}
+.field{margin-bottom:16px;}
+.field label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); margin-bottom:7px; text-transform:uppercase; letter-spacing:.04em;}
+.field input[type=text], .field input[type=email], .field textarea, .field select{width:100%; padding:13px 15px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:15px; font-family:inherit;}
 .field textarea{min-height:110px; resize:vertical;}
-.upload-box{border:2px dashed var(--line); border-radius:var(--radius-sm); padding:24px; text-align:center; color:var(--ink-soft); font-size:14px;}
+.upload-box{border:2px dashed var(--line); border-radius:var(--radius-lg); padding:30px; text-align:center; color:var(--ink-soft); font-size:14px; display:flex; flex-direction:column; align-items:center; gap:10px;}
 .upload-box.has-media{padding:0; border-style:solid; overflow:hidden;}
 .upload-box img, .upload-box video{width:100%; max-height:220px; object-fit:cover;}
-.btn{display:block; width:100%; padding:14px; border-radius:999px; font-weight:700; font-size:15.5px; text-align:center;}
-.btn-primary{background:var(--pine); color:#fff;}
-.btn-primary:disabled{opacity:.5;}
-.btn-ghost{background:var(--paper-warm); color:var(--ink); margin-top:8px;}
-.steps{display:flex; gap:6px; margin-bottom:18px;}
-.steps span{flex:1; height:4px; border-radius:2px; background:var(--line);}
-.steps span.done{background:var(--pine);}
+.btn{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:15px; border-radius:999px; font-weight:800; font-size:15.5px;}
+.btn-primary{background:var(--primary); color:#fff; box-shadow:var(--shadow-soft);}
+.btn-primary:disabled{opacity:.45;}
+.btn-ghost{background:var(--card); color:var(--ink); margin-top:9px; border:1px solid var(--line);}
+.steps{display:flex; gap:6px; margin-bottom:20px;}
+.steps span{flex:1; height:4px; border-radius:2px; background:var(--line); transition:.3s;}
+.steps span.done{background:var(--primary);}
 .cat-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.cat-grid button{padding:14px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--card); text-align:left; font-size:14px; font-weight:600;}
-.cat-grid button[aria-pressed="true"]{border-color:var(--pine); background:var(--pine-soft); color:var(--pine);}
+.cat-grid button{padding:15px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--card); text-align:left; font-size:14px; font-weight:700;}
+.cat-grid button[aria-pressed="true"]{border-color:var(--primary); background:rgba(43,78,255,.08); color:var(--primary);}
 
-/* ---------- Mere-menu / lister ---------- */
-.list-section{padding:14px 16px 4px;}
-.list-section h3{font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin:18px 0 8px;}
-.list-item{display:flex; align-items:center; gap:14px; padding:14px 4px; border-bottom:1px solid var(--line);}
-.list-item .ic{width:36px; height:36px; border-radius:10px; background:var(--pine-soft); color:var(--pine); display:flex; align-items:center; justify-content:center; font-size:17px;}
-.list-item .txt{flex:1;}
-.list-item .txt .t{font-weight:600; font-size:15px;}
+/* ---------- Mere-menu ---------- */
+.list-section{padding:16px 20px 4px;}
+.list-section h3{font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin:20px 0 10px; font-weight:700;}
+.list-item{display:flex; align-items:center; gap:14px; padding:15px 6px; border-bottom:1px solid var(--line);}
+.list-item .ic{width:40px; height:40px; border-radius:13px; background:var(--card); border:1px solid var(--line); color:var(--primary); display:flex; align-items:center; justify-content:center; flex:none;}
+.list-item .ic .icon{width:19px; height:19px;}
+.list-item .txt{flex:1; min-width:0;}
+.list-item .txt .t{font-weight:700; font-size:15px;}
 .list-item .txt .s{font-size:12.5px; color:var(--ink-soft);}
-.toggle{width:44px; height:26px; border-radius:999px; background:var(--line); position:relative; transition:.2s;}
-.toggle::after{content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:.2s;}
-.toggle[aria-checked="true"]{background:var(--pine);}
-.toggle[aria-checked="true"]::after{transform:translateX(18px);}
+.toggle{width:46px; height:27px; border-radius:999px; background:var(--line); position:relative; transition:.2s; flex:none;}
+.toggle::after{content:''; position:absolute; top:3px; left:3px; width:21px; height:21px; border-radius:50%; background:#fff; transition:.2s var(--ease); box-shadow:0 1px 3px rgba(0,0,0,.25);}
+.toggle[aria-checked="true"]{background:var(--primary);}
+.toggle[aria-checked="true"]::after{transform:translateX(19px);}
 
 /* ---------- Admin ---------- */
-.stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:4px 16px;}
-.stat-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius-sm); padding:16px;}
-.stat-card .n{font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--pine);}
-.stat-card .l{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
-.admin-row{display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--line);}
-.role-pill{font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px; background:var(--pine-soft); color:var(--pine);}
-.role-select{margin-left:auto; padding:6px 10px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:13px;}
-.status-pill{font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px;}
-.status-pill.udgivet{background:var(--pine-soft); color:var(--pine);}
-.status-pill.afventer{background:#F3E6C8; color:#8A6512;}
-.status-pill.kladde{background:var(--line); color:var(--ink-soft);}
+.stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:4px 20px;}
+.stat-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px; box-shadow:var(--shadow-soft);}
+.stat-card .n{font-family:var(--font-display); font-size:28px; font-weight:800; color:var(--primary);}
+.stat-card .l{font-size:12.5px; color:var(--ink-soft); margin-top:3px; font-weight:600;}
+.admin-row{display:flex; align-items:center; gap:10px; padding:13px 20px; border-bottom:1px solid var(--line);}
+.role-select{margin-left:auto; padding:7px 11px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:13px;}
+.status-pill{font-size:11px; font-weight:800; padding:4px 10px; border-radius:999px;}
 
 /* ---------- Toast ---------- */
-#toast{position:fixed; left:50%; bottom:100px; transform:translate(-50%,12px); background:var(--ink); color:var(--paper); padding:12px 20px; border-radius:999px; font-size:14px; font-weight:600; z-index:300; opacity:0; transition:.25s; pointer-events:none;}
+#toast{position:fixed; left:50%; bottom:108px; transform:translate(-50%,14px); background:var(--ink); color:var(--mist); padding:13px 22px; border-radius:999px; font-size:14px; font-weight:700; z-index:300; opacity:0; transition:.3s var(--ease); pointer-events:none; box-shadow:var(--shadow-lift);}
 #toast.show{opacity:1; transform:translate(-50%,0);}
 
-/* ---------- GDPR banner ---------- */
-.gdpr{position:fixed; left:12px; right:12px; bottom:12px; max-width:536px; margin:0 auto; background:var(--card); border:1px solid var(--line); border-radius:var(--radius-sm); padding:16px; box-shadow:var(--shadow); z-index:400; display:none;}
+/* ---------- GDPR ---------- */
+.gdpr{position:fixed; left:14px; right:14px; bottom:14px; max-width:572px; margin:0 auto; background:var(--glass); backdrop-filter:blur(18px); border:1px solid var(--glass-line); border-radius:var(--radius-lg); padding:18px; box-shadow:var(--shadow-lift); z-index:400; display:none;}
 .gdpr.show{display:block;}
-.gdpr p{font-size:13px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;}
+.gdpr p{font-size:13px; color:var(--ink-soft); margin-bottom:14px; line-height:1.55;}
 .gdpr .row{display:flex; gap:8px;}
-.gdpr button{flex:1; padding:10px; border-radius:999px; font-size:13.5px; font-weight:700;}
+.gdpr button{flex:1; padding:11px; border-radius:999px; font-size:13.5px; font-weight:800;}
 
-@media (min-width:640px){
-  .feed{grid-template-columns:1fr 1fr; display:grid;}
-}
-@media (prefers-reduced-motion: reduce){
-  *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
-}
+@media (min-width:640px){ .feed{grid-template-columns:1fr 1fr; display:grid;} .event-grid{grid-template-columns:1fr 1fr;} }
+@media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
 </style>
 </head>
 <body data-theme="light">
 <a href="#main" class="skip-link">Spring til indhold</a>
 
-<div id="app">
+<!-- ================= IKON-BIBLIOTEK (outline, ikke emoji) ================= -->
+<svg class="sr-only" aria-hidden="true"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 3v5M16 3v5"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5 16 12l-6 3.5Z"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9Z"/><path d="M10 19.5a2 2 0 0 0 4 0"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2M12 19.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2.5 12h2M19.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.5A9 9 0 1 1 10.5 3a7.2 7.2 0 0 0 10.5 10.5Z"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5s-7.2-4.4-9.6-8.7C.8 8 3.3 4.3 7 4.3c2.1 0 3.9 1.1 5 2.9 1.1-1.8 2.9-2.9 5-2.9 3.7 0 6.2 3.7 4.6 7.5-2.4 4.3-9.6 8.7-9.6 8.7Z"/></symbol>
+<symbol id="i-heart-fill" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 20.5s-7.2-4.4-9.6-8.7C.8 8 3.3 4.3 7 4.3c2.1 0 3.9 1.1 5 2.9 1.1-1.8 2.9-2.9 5-2.9 3.7 0 6.2 3.7 4.6 7.5-2.4 4.3-9.6 8.7-9.6 8.7Z"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.6 15.7 6.5M8.3 13.4l7.4 4.1"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-4 4-6.5 8-6.5s8 2.5 8 6.5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4 10-10"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16M13 6l6 6-6 6"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-7.6 7-12.3A7 7 0 0 0 5 8.7C5 13.4 12 21 12 21Z"/><circle cx="12" cy="8.7" r="2.4"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5-9 9"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1.5 1.5 0 0 1 1.5 1.5V18A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18V9.5A1.5 1.5 0 0 1 4 8Z"/><circle cx="12" cy="13.3" r="3.6"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6Z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 8.5A11 11 0 0 1 22 8m-19.6 3A11 11 0 0 1 5 8.4M5.5 12.6a6.5 6.5 0 0 1 5-2.1M9 16.3a3 3 0 0 1 3-1.3"/><circle cx="12" cy="19.5" r="1"/></symbol>
+</defs></svg>
 
-  <!-- ================= HEADER ================= -->
+<div id="app">
   <header class="topbar" id="topbar">
     <div class="brand">
-      <div class="mark" aria-hidden="true">N</div>
-      <span class="name" id="brandName">Nordic Info</span>
+      <div class="mark" id="brandMark">N</div>
+      <span class="name" id="brandName">Nordic Media</span>
     </div>
     <div class="topbar-actions">
-      <button class="icon-btn" id="btnSearch" aria-label="Søg">🔍</button>
-      <button class="icon-btn" id="btnTheme" aria-label="Skift mellem lys og mørk tilstand">🌙</button>
+      <button class="icon-btn" id="btnSearch" aria-label="Søg"><svg class="icon"><use href="#i-search"/></svg></button>
+      <button class="icon-btn" id="btnTheme" aria-label="Skift mellem lys og mørk tilstand"><svg class="icon"><use href="#i-moon"/></svg></button>
     </div>
   </header>
 
   <div class="chip-row" id="chipRow" role="tablist" aria-label="Filtrér efter kategori"></div>
 
-  <!-- ================= MAIN ================= -->
   <main id="main">
 
-    <!-- HJEM / NYT (samme feed-komponent, filtreret) -->
     <section class="view active" id="view-home" aria-label="Forside">
+      <div class="hero-wrap">
+        <div class="hero-scroller" id="heroScroller"></div>
+        <div class="dots" id="heroDots"></div>
+      </div>
+      <div class="section-head"><h3>Det sker</h3><button class="see-all" id="seeAllKalender">Se alle <svg class="icon" style="width:15px;height:15px;"><use href="#i-chevron"/></svg></button></div>
+      <div class="mini-scroller" id="miniScroller"></div>
+      <div class="section-head"><h3>Seneste</h3></div>
       <div class="feed" id="feedHome"></div>
     </section>
 
@@ -238,68 +332,61 @@ nav.tabbar button[aria-current="page"] .ic{transform:translateY(-1px);}
     </section>
 
     <section class="view" id="view-kalender" aria-label="Kalender">
-      <div class="list-section"><h3>Kommende arrangementer</h3></div>
-      <div class="feed" id="feedKalender"></div>
+      <div class="section-head"><h3>Arrangementer</h3></div>
+      <div class="event-grid" id="eventGrid"></div>
     </section>
 
     <section class="view" id="view-video" aria-label="Video">
-      <div class="feed" id="feedVideo"></div>
+      <div class="section-head"><h3>I fokus</h3></div>
+      <div class="video-hero" id="videoHero"></div>
+      <div class="section-head"><h3>Flere videoer</h3></div>
+      <div class="video-list" id="videoList"></div>
     </section>
 
     <section class="view" id="view-mere" aria-label="Mere">
       <div class="list-section" id="mereAccount"></div>
       <div class="list-section">
         <h3>Indhold</h3>
-        <div class="list-item"><div class="ic">⭐</div><div class="txt"><div class="t">Favoritter</div><div class="s">Gemte opslag</div></div><button class="icon-btn" id="goFavoritter">›</button></div>
-        <div class="list-item"><div class="ic">✉️</div><div class="txt"><div class="t">Kontakt</div><div class="s">Kom i kontakt med os</div></div><button class="icon-btn" id="goKontakt">›</button></div>
-        <div class="list-item"><div class="ic">ℹ️</div><div class="txt"><div class="t">Information</div><div class="s">Om platformen</div></div><button class="icon-btn" id="goInformation">›</button></div>
+        <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-heart"/></svg></div><div class="txt"><div class="t">Favoritter</div><div class="s">Gemte opslag</div></div><button class="icon-btn" id="goFavoritter" aria-label="Åbn favoritter"><svg class="icon"><use href="#i-chevron"/></svg></button></div>
+        <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-share"/></svg></div><div class="txt"><div class="t">Kontakt</div><div class="s" id="contactPreview">Kom i kontakt med os</div></div><button class="icon-btn" id="goKontakt" aria-label="Kontakt"><svg class="icon"><use href="#i-chevron"/></svg></button></div>
+        <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-shield"/></svg></div><div class="txt"><div class="t">Om platformen</div><div class="s" id="aboutPreview">Information</div></div><button class="icon-btn" id="goInformation" aria-label="Om platformen"><svg class="icon"><use href="#i-chevron"/></svg></button></div>
       </div>
       <div class="list-section">
         <h3>Indstillinger</h3>
-        <div class="list-item"><div class="ic">🔔</div><div class="txt"><div class="t">Push-notifikationer</div><div class="s">Få besked om nyt indhold</div></div><button class="toggle" id="togglePush" role="switch" aria-checked="false" aria-label="Push-notifikationer"></button></div>
-        <div class="list-item"><div class="ic">📶</div><div class="txt"><div class="t">Offline-adgang</div><div class="s"><span id="offlineCount">0</span> opslag cachet til offline</div></div></div>
-        <div class="list-item"><div class="ic">🔒</div><div class="txt"><div class="t">Databehandling</div><div class="s">GDPR og samtykke</div></div><button class="icon-btn" id="goPrivacy">›</button></div>
+        <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-bell"/></svg></div><div class="txt"><div class="t">Push-notifikationer</div><div class="s">Få besked om nyt indhold</div></div><button class="toggle" id="togglePush" role="switch" aria-checked="false" aria-label="Push-notifikationer"></button></div>
+        <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-wifi-off"/></svg></div><div class="txt"><div class="t">Offline-adgang</div><div class="s"><span id="offlineCount">0</span> opslag cachet</div></div></div>
+        <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-shield"/></svg></div><div class="txt"><div class="t">Databehandling</div><div class="s">GDPR og samtykke</div></div><button class="icon-btn" id="goPrivacy" aria-label="Databehandling"><svg class="icon"><use href="#i-chevron"/></svg></button></div>
       </div>
       <div class="list-section" id="mereAdminEntry"></div>
     </section>
 
     <section class="view" id="view-favoritter" aria-label="Favoritter">
-      <div class="list-section"><h3>Dine favoritter</h3></div>
+      <div class="section-head"><h3>Dine favoritter</h3></div>
       <div class="feed" id="feedFavoritter"></div>
     </section>
 
     <section class="view" id="view-admin" aria-label="Administration">
-      <div class="list-section"><h3>Statistik</h3></div>
+      <div class="section-head"><h3>Statistik</h3></div>
       <div class="stat-grid" id="adminStats"></div>
-      <div class="list-section"><h3>Afventer godkendelse</h3></div>
+      <div class="section-head"><h3>Afventer godkendelse</h3></div>
       <div id="adminPending"></div>
-      <div class="list-section"><h3>Brugere og roller</h3></div>
+      <div class="section-head"><h3>Brugere og roller</h3></div>
       <div id="adminUsers"></div>
     </section>
 
   </main>
 
-  <!-- ================= FAB ================= -->
-  <button class="fab" id="fabNew" aria-label="Nyt opslag">＋</button>
+  <button class="fab" id="fabNew" aria-label="Nyt opslag"><svg class="icon"><use href="#i-plus"/></svg></button>
 
-  <!-- ================= BOTTOM NAV ================= -->
-  <nav class="tabbar" aria-label="Hovednavigation">
-    <button data-view="home" aria-current="page"><span class="ic">🏠</span><span class="lb">Hjem</span></button>
-    <button data-view="nyt"><span class="ic">📰</span><span class="lb">Nyt</span></button>
-    <button data-view="kalender"><span class="ic">📅</span><span class="lb">Kalender</span></button>
-    <button data-view="video"><span class="ic">🎥</span><span class="lb">Video</span></button>
-    <button data-view="mere"><span class="ic">☰</span><span class="lb">Mere</span></button>
-  </nav>
-
+  <nav class="tabbar" id="tabbar" aria-label="Hovednavigation"></nav>
 </div>
 
-<!-- ================= POST-DETALJE (SHEET) ================= -->
 <div class="sheet" id="postSheet" role="dialog" aria-modal="true">
   <div class="sheet-header">
-    <button class="icon-btn" id="closeSheet" aria-label="Luk">←</button>
+    <button class="icon-btn" id="closeSheet" aria-label="Luk"><svg class="icon"><use href="#i-arrow" style="transform:rotate(180deg)"/></svg></button>
     <div class="card-actions">
-      <button class="icon-btn" id="favBtn" aria-label="Gem som favorit">☆</button>
-      <button class="icon-btn" id="shareBtn" aria-label="Del">↗</button>
+      <button class="circle-btn" id="favBtn" aria-label="Gem som favorit"><svg class="icon"><use href="#i-heart"/></svg></button>
+      <button class="circle-btn" id="shareBtn" aria-label="Del"><svg class="icon"><use href="#i-share"/></svg></button>
     </div>
   </div>
   <div id="sheetMedia"></div>
@@ -311,7 +398,6 @@ nav.tabbar button[aria-current="page"] .ic{transform:translateY(-1px);}
   </div>
 </div>
 
-<!-- ================= SØG ================= -->
 <div class="modal-backdrop" id="searchBackdrop">
   <div class="modal">
     <h2>Søg</h2>
@@ -320,18 +406,16 @@ nav.tabbar button[aria-current="page"] .ic{transform:translateY(-1px);}
   </div>
 </div>
 
-<!-- ================= LOGIN ================= -->
 <div class="modal-backdrop" id="authBackdrop">
   <div class="modal">
     <h2>Log ind</h2>
-    <p style="color:var(--ink-soft); font-size:13.5px; margin-bottom:16px;">Log ind for at publicere, kommentere og gemme favoritter. Du får et login-link på e-mail.</p>
+    <p style="color:var(--ink-soft); font-size:13.5px; margin-bottom:18px;">Log ind for at publicere, kommentere og gemme favoritter. Du får et login-link på e-mail.</p>
     <div class="field"><label for="authEmail">E-mail</label><input type="email" id="authEmail" placeholder="navn@eksempel.dk"></div>
     <button class="btn btn-primary" id="sendMagicLink">Send login-link</button>
-    <p id="authStatus" style="font-size:13px; color:var(--pine); margin-top:12px; display:none;"></p>
+    <p id="authStatus" style="font-size:13px; color:var(--primary); margin-top:12px; display:none;"></p>
   </div>
 </div>
 
-<!-- ================= NYT OPSLAG (3 tryk-flow) ================= -->
 <div class="modal-backdrop" id="newPostBackdrop">
   <div class="modal">
     <div class="steps"><span id="s1"></span><span id="s2"></span><span id="s3"></span></div>
@@ -339,30 +423,31 @@ nav.tabbar button[aria-current="page"] .ic{transform:translateY(-1px);}
     <div id="stepMedia">
       <h2>1. Tilføj billede eller video</h2>
       <label class="upload-box" id="uploadBox" for="mediaInput">
+        <svg class="icon" style="width:26px;height:26px;"><use href="#i-camera"/></svg>
         <span id="uploadHint">Tryk for at vælge billede eller video</span>
       </label>
       <input type="file" id="mediaInput" accept="image/*,video/*" class="sr-only">
-      <button class="btn btn-primary" id="toStep2" disabled style="margin-top:16px;">Næste</button>
+      <button class="btn btn-primary" id="toStep2" disabled style="margin-top:18px;">Næste <svg class="icon" style="width:17px;height:17px;"><use href="#i-arrow"/></svg></button>
     </div>
 
     <div id="stepText" style="display:none;">
       <h2>2. Skriv tekst</h2>
       <div class="field"><label for="postTitle">Overskrift</label><input type="text" id="postTitle" placeholder="Kort og fængende…" maxlength="80"></div>
       <div class="field"><label for="postExcerpt">Kort beskrivelse</label><textarea id="postExcerpt" placeholder="Et par sætninger til feedet…" maxlength="180"></textarea></div>
-      <button class="btn btn-primary" id="toStep3">Næste</button>
+      <button class="btn btn-primary" id="toStep3">Næste <svg class="icon" style="width:17px;height:17px;"><use href="#i-arrow"/></svg></button>
       <button class="btn btn-ghost" id="backTo1">Tilbage</button>
     </div>
 
     <div id="stepCategory" style="display:none;">
       <h2>3. Vælg kategori og udgiv</h2>
       <div class="cat-grid" id="categoryGrid"></div>
-      <div class="field" style="margin-top:14px;">
+      <div class="field" style="margin-top:16px;">
         <label class="list-item" style="padding:10px 0; border:none;">
           <span class="txt"><span class="t" style="font-size:13.5px;">Tillad kommentarer</span></span>
           <button class="toggle" id="toggleComments" role="switch" aria-checked="true" style="margin-left:auto;"></button>
         </label>
       </div>
-      <button class="btn btn-primary" id="publishBtn">Udgiv</button>
+      <button class="btn btn-primary" id="publishBtn"><svg class="icon" style="width:17px;height:17px;"><use href="#i-check"/></svg> Udgiv</button>
       <button class="btn btn-ghost" id="backTo2">Tilbage</button>
     </div>
   </div>
@@ -371,7 +456,7 @@ nav.tabbar button[aria-current="page"] .ic{transform:translateY(-1px);}
 <div id="toast" role="status" aria-live="polite"></div>
 
 <div class="gdpr" id="gdprBanner">
-  <p>Nordic Info bruger cookies og lokal lagring til login, offline-adgang og notifikationer. Data behandles i henhold til GDPR og gemmes hos Supabase (EU). <a href="#" id="gdprLink" style="color:var(--pine); font-weight:600;">Læs mere</a>.</p>
+  <p id="gdprText">Denne app bruger cookies og lokal lagring til login, offline-adgang og notifikationer. Data behandles i henhold til GDPR og gemmes hos Supabase (EU).</p>
   <div class="row">
     <button class="btn-ghost" id="gdprDecline">Kun nødvendige</button>
     <button class="btn-primary" id="gdprAccept">Accepter</button>
@@ -380,45 +465,61 @@ nav.tabbar button[aria-current="page"] .ic{transform:translateY(-1px);}
 
 <script type="module">
 /* ============================================================
-   KONFIGURATION — udfyld pr. kunde før udgivelse
+   KONFIGURATION indlæst fra config.js (window.NORDIC_CONFIG)
    ============================================================ */
-const CONFIG = {
-  BRAND_NAME: 'Nordic Info',
-  SUPABASE_URL: 'https://DIT-PROJEKT.supabase.co',
-  SUPABASE_ANON_KEY: 'DIN-ANON-KEY',
-  VAPID_PUBLIC_KEY: '' // udfyldes når push-backend (Edge Function) er sat op
-};
+const CFG = window.NORDIC_CONFIG || {};
+const C = CFG.colors || {};
+const root = document.documentElement;
+Object.entries({ primary:C.primary, 'primary-deep':C.primaryDeep, secondary:C.secondary, accent:C.accent, accent2:C.accent2, accent3:C.accent3, accent4:C.accent4, mist:C.mist })
+  .forEach(([k,v]) => { if (v) root.style.setProperty('--' + k, v); });
+
+document.getElementById('brandName').textContent = CFG.brand?.name || 'Nordic Media';
+document.title = CFG.brand?.name || 'Nordic Media';
+document.querySelector('meta[name="description"]').setAttribute('content', CFG.brand?.tagline || '');
+document.querySelector('meta[name="theme-color"]').setAttribute('content', C.primaryDeep || '#0F1B3D');
+const markEl = document.getElementById('brandMark');
+if (CFG.brand?.logoImage) markEl.innerHTML = `<img src="${CFG.brand.logoImage}" alt="${CFG.brand.name} logo">`;
+else markEl.textContent = CFG.brand?.logoText || 'N';
+document.getElementById('contactPreview').textContent = CFG.contact?.email || 'Kom i kontakt med os';
+document.getElementById('aboutPreview').textContent = CFG.brand?.tagline || 'Om platformen';
+
+// Bottom-nav bygges fra config
+const NAV = CFG.nav || [
+  { id:'home', label:'Hjem', icon:'home' }, { id:'nyt', label:'Nyt', icon:'doc' },
+  { id:'kalender', label:'Kalender', icon:'calendar' }, { id:'video', label:'Video', icon:'play' },
+  { id:'mere', label:'Mere', icon:'menu' }
+];
+document.getElementById('tabbar').innerHTML = NAV.map((n,i) => `
+  <button data-view="${n.id}" ${i===0?'aria-current="page"':''}>
+    <svg class="icon"><use href="#i-${n.icon}"/></svg><span class="lb">${n.label}</span>
+  </button>`).join('');
+
+const CATCOLOR = { accent:'--accent', accent2:'--accent2', accent3:'--accent3', accent4:'--accent4' };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-
-document.getElementById('brandName').textContent = CONFIG.BRAND_NAME;
+const supabase = createClient(CFG.supabase?.url, CFG.supabase?.anonKey);
 
 /* ============================================================
    STATE
    ============================================================ */
-let session = null;
-let profile = null; // { id, role, full_name }
-let categories = [];
-let posts = [];      // udgivne + evt. egne kladder
+let session = null, profile = null;
+let categories = [], posts = [];
 let favoriteIds = new Set();
 let activeCategory = 'alle';
 let currentPost = null;
 
 /* ============================================================
-   IndexedDB — offline cache + kladder
+   IndexedDB — offline cache
    ============================================================ */
 const idb = (() => {
   let dbp = null;
   function open(){
     if (dbp) return dbp;
     dbp = new Promise((resolve, reject) => {
-      const req = indexedDB.open('nordic-info', 1);
+      const req = indexedDB.open('nordic-media', 1);
       req.onupgradeneeded = () => {
         const db = req.result;
         if (!db.objectStoreNames.contains('posts')) db.createObjectStore('posts', { keyPath: 'id' });
-        if (!db.objectStoreNames.contains('drafts')) db.createObjectStore('drafts', { keyPath: 'id' });
-        if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'key' });
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);
@@ -429,41 +530,28 @@ const idb = (() => {
   async function all(store){ const db = await open(); return new Promise((res, rej) => { const tx = db.transaction(store,'readonly'); const r = tx.objectStore(store).getAll(); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
   return { put, all };
 })();
-
-async function cachePostsOffline(list){
-  for (const p of list) await idb.put('posts', p);
-  const cached = await idb.all('posts');
-  document.getElementById('offlineCount').textContent = cached.length;
-}
+async function cachePostsOffline(list){ for (const p of list) await idb.put('posts', p); const cached = await idb.all('posts'); document.getElementById('offlineCount').textContent = cached.length; }
 
 /* ============================================================
    TOAST
    ============================================================ */
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toast._t);
-  toast._t = setTimeout(() => t.classList.remove('show'), 2400);
-}
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2400); }
 
 /* ============================================================
-   THEME (lys/mørk)
+   THEME
    ============================================================ */
 const themeBtn = document.getElementById('btnTheme');
-function applyTheme(mode){
-  document.body.dataset.theme = mode;
-  themeBtn.textContent = mode === 'dark' ? '☀️' : '🌙';
-  localStorage.setItem('ni-theme', mode);
-}
-applyTheme(localStorage.getItem('ni-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+function applyTheme(mode){ document.body.dataset.theme = mode; themeBtn.querySelector('use').setAttribute('href', mode === 'dark' ? '#i-sun' : '#i-moon'); localStorage.setItem('nm-theme', mode); }
+if (CFG.features?.darkMode !== false) applyTheme(localStorage.getItem('nm-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
 themeBtn.addEventListener('click', () => applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark'));
 
 /* ============================================================
-   GDPR-BANNER
+   GDPR
    ============================================================ */
-if (!localStorage.getItem('ni-consent')) document.getElementById('gdprBanner').classList.add('show');
-document.getElementById('gdprAccept').addEventListener('click', () => { localStorage.setItem('ni-consent','full'); document.getElementById('gdprBanner').classList.remove('show'); });
-document.getElementById('gdprDecline').addEventListener('click', () => { localStorage.setItem('ni-consent','minimal'); document.getElementById('gdprBanner').classList.remove('show'); });
+document.getElementById('gdprText').textContent = `${CFG.brand?.name || 'Denne app'} bruger cookies og lokal lagring til login, offline-adgang og notifikationer. Data behandles i henhold til GDPR og gemmes hos Supabase (EU).`;
+if (!localStorage.getItem('nm-consent')) document.getElementById('gdprBanner').classList.add('show');
+document.getElementById('gdprAccept').addEventListener('click', () => { localStorage.setItem('nm-consent','full'); document.getElementById('gdprBanner').classList.remove('show'); });
+document.getElementById('gdprDecline').addEventListener('click', () => { localStorage.setItem('nm-consent','minimal'); document.getElementById('gdprBanner').classList.remove('show'); });
 
 /* ============================================================
    AUTH
@@ -471,16 +559,11 @@ document.getElementById('gdprDecline').addEventListener('click', () => { localSt
 async function refreshSession(){
   const { data: { session: s } } = await supabase.auth.getSession();
   session = s;
-  if (session){
-    const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-    profile = data;
-  } else {
-    profile = null;
-  }
-  renderAccountSection();
-  renderAdminEntry();
+  if (session){ const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).single(); profile = data; }
+  else profile = null;
+  renderAccountSection(); renderAdminEntry();
 }
-supabase.auth.onAuthStateChange((_evt, s) => { session = s; refreshSession(); });
+supabase.auth.onAuthStateChange((_e, s) => { session = s; refreshSession(); });
 
 document.getElementById('sendMagicLink').addEventListener('click', async () => {
   const email = document.getElementById('authEmail').value.trim();
@@ -494,20 +577,16 @@ document.getElementById('sendMagicLink').addEventListener('click', async () => {
 function renderAccountSection(){
   const el = document.getElementById('mereAccount');
   if (session && profile){
-    el.innerHTML = `
-      <div class="list-item" style="border-bottom:none;">
-        <div class="ic">👤</div>
-        <div class="txt"><div class="t">${profile.full_name || session.user.email}</div><div class="s">${roleLabel(profile.role)}</div></div>
-        <button class="icon-btn" id="btnLogout" aria-label="Log ud">⎋</button>
-      </div>`;
+    el.innerHTML = `<div class="list-item" style="border-bottom:none;">
+      <div class="ic"><svg class="icon"><use href="#i-user"/></svg></div>
+      <div class="txt"><div class="t">${profile.full_name || session.user.email}</div><div class="s">${roleLabel(profile.role)}</div></div>
+      <button class="icon-btn" id="btnLogout" aria-label="Log ud"><svg class="icon"><use href="#i-logout"/></svg></button></div>`;
     document.getElementById('btnLogout').addEventListener('click', async () => { await supabase.auth.signOut(); toast('Du er logget ud'); });
   } else {
-    el.innerHTML = `
-      <div class="list-item" style="border-bottom:none;">
-        <div class="ic">👤</div>
-        <div class="txt"><div class="t">Ikke logget ind</div><div class="s">Log ind for at publicere og kommentere</div></div>
-        <button class="icon-btn" id="btnLoginOpen" aria-label="Log ind">›</button>
-      </div>`;
+    el.innerHTML = `<div class="list-item" style="border-bottom:none;">
+      <div class="ic"><svg class="icon"><use href="#i-user"/></svg></div>
+      <div class="txt"><div class="t">Ikke logget ind</div><div class="s">Log ind for at publicere og kommentere</div></div>
+      <button class="icon-btn" id="btnLoginOpen" aria-label="Log ind"><svg class="icon"><use href="#i-chevron"/></svg></button></div>`;
     document.getElementById('btnLoginOpen').addEventListener('click', () => openModal('authBackdrop'));
   }
 }
@@ -520,11 +599,9 @@ function renderAdminEntry(){
   const el = document.getElementById('mereAdminEntry');
   if (canModerate()){
     el.innerHTML = `<h3>Administration</h3>
-      <div class="list-item"><div class="ic">🛠️</div><div class="txt"><div class="t">Administrationspanel</div><div class="s">Brugere, opslag og statistik</div></div><button class="icon-btn" id="goAdmin">›</button></div>`;
+      <div class="list-item"><div class="ic"><svg class="icon"><use href="#i-shield"/></svg></div><div class="txt"><div class="t">Administrationspanel</div><div class="s">Brugere, opslag og statistik</div></div><button class="icon-btn" id="goAdmin" aria-label="Åbn administration"><svg class="icon"><use href="#i-chevron"/></svg></button></div>`;
     document.getElementById('goAdmin').addEventListener('click', () => { showView('admin'); loadAdmin(); });
-  } else {
-    el.innerHTML = '';
-  }
+  } else el.innerHTML = '';
 }
 
 /* ============================================================
@@ -535,95 +612,118 @@ async function loadCategories(){
   categories = data || [];
   const row = document.getElementById('chipRow');
   row.innerHTML = '<button class="chip" data-cat="alle" aria-pressed="true">Alle</button>' +
-    categories.map(c => `<button class="chip" data-cat="${c.slug}" aria-pressed="false">${c.icon} ${c.label}</button>`).join('');
+    categories.map(c => `<button class="chip" data-cat="${c.slug}" aria-pressed="false">${c.label}</button>`).join('');
   row.querySelectorAll('.chip').forEach(btn => btn.addEventListener('click', () => {
     row.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed','false'));
-    btn.setAttribute('aria-pressed','true');
-    activeCategory = btn.dataset.cat;
-    renderFeed();
+    btn.setAttribute('aria-pressed','true'); activeCategory = btn.dataset.cat; renderFeed();
   }));
   const grid = document.getElementById('categoryGrid');
-  grid.innerHTML = categories.map(c => `<button type="button" data-cat="${c.id}" aria-pressed="false">${c.icon} ${c.label}</button>`).join('');
+  grid.innerHTML = categories.map(c => `<button type="button" data-cat="${c.id}" aria-pressed="false">${c.label}</button>`).join('');
   grid.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
     grid.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed','false'));
-    btn.setAttribute('aria-pressed','true');
-    newPost.categoryId = btn.dataset.cat;
+    btn.setAttribute('aria-pressed','true'); newPost.categoryId = btn.dataset.cat;
   }));
 }
+function catColorVar(p){ const key = p.categories?.color_key || 'accent'; return `var(${CATCOLOR[key] || '--accent'})`; }
 
 /* ============================================================
-   OPSLAG — hent og vis
+   OPSLAG
    ============================================================ */
 async function loadPosts(){
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*, categories(slug,label,icon), profiles(full_name)')
-    .eq('status', 'udgivet')
-    .lte('published_at', new Date().toISOString())
+  const { data, error } = await supabase.from('posts')
+    .select('*, categories(slug,label,color_key), profiles(full_name)')
+    .eq('status', 'udgivet').lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false });
-
-  if (error){
-    // Offline fallback
-    posts = await idb.all('posts');
-    toast('Offline — viser gemt indhold');
-    renderFeed();
-    return;
-  }
+  if (error){ posts = await idb.all('posts'); toast('Offline — viser gemt indhold'); renderAll(); return; }
   posts = data || [];
   cachePostsOffline(posts);
-  renderFeed();
+  renderAll();
 }
 
+function renderAll(){ renderHero(); renderMini(); renderFeed(); renderVideoHub(); renderEvents(); }
+
+function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function fmtDate(d){ return d ? new Date(d).toLocaleDateString('da-DK', { day:'numeric', month:'short' }) : ''; }
+
+/* ---- Hero-karrusel (3 seneste) ---- */
+function renderHero(){
+  const top = posts.slice(0,4);
+  const scroller = document.getElementById('heroScroller');
+  const dots = document.getElementById('heroDots');
+  if (!top.length){ scroller.innerHTML = ''; dots.innerHTML = ''; return; }
+  scroller.innerHTML = top.map(p => `
+    <article class="hero-card" data-id="${p.id}">
+      ${p.media_type === 'video' ? `<video src="${p.media_url}" muted playsinline></video>` : `<img src="${p.media_url || ''}" alt="" loading="lazy">`}
+      <div class="scrim"></div>
+      <div class="content">
+        <span class="tag" style="background:${catColorVar(p)}; color:#fff;">${p.categories?.label || ''}</span>
+        <h2>${escapeHtml(p.title)}</h2>
+        <p class="excerpt">${escapeHtml(p.excerpt || '')}</p>
+        <button class="pill-btn" data-open="${p.id}">Læs mere <svg class="icon" style="width:16px;height:16px;"><use href="#i-arrow"/></svg></button>
+      </div>
+    </article>`).join('');
+  dots.innerHTML = top.map((_,i) => `<span class="${i===0?'active':''}"></span>`).join('');
+  scroller.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); openPost(b.dataset.open); }));
+  scroller.addEventListener('scroll', () => {
+    const idx = Math.round(scroller.scrollLeft / scroller.clientWidth);
+    dots.querySelectorAll('span').forEach((d,i) => d.classList.toggle('active', i === idx));
+  }, { passive:true });
+}
+
+/* ---- "Det sker" mini-kort ---- */
+function renderMini(){
+  const events = posts.filter(p => p.event_date).sort((a,b) => new Date(a.event_date)-new Date(b.event_date)).slice(0,6);
+  const el = document.getElementById('miniScroller');
+  if (!events.length){ el.innerHTML = `<div style="padding:0 4px; color:var(--ink-soft); font-size:13.5px;">Ingen kommende arrangementer.</div>`; return; }
+  el.innerHTML = events.map(p => {
+    const d = new Date(p.event_date);
+    return `<button class="mini-card" data-open="${p.id}">
+      <div class="mini-date" style="background:${catColorVar(p)};"><span class="d">${d.getDate()}</span><span class="m">${d.toLocaleDateString('da-DK',{month:'short'})}</span></div>
+      <div class="t">${escapeHtml(p.title)}</div>
+      <div class="time">${escapeHtml(p.event_time || '')}</div>
+    </button>`;
+  }).join('');
+  el.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openPost(b.dataset.open)));
+}
+
+/* ---- Premium feed-kort ---- */
 function cardHtml(p){
-  const cat = p.categories;
   const media = p.media_type === 'video'
-    ? `<div class="media"><video src="${p.media_url}" muted playsinline></video><div class="play"><span>▶</span></div></div>`
+    ? `<div class="media"><video src="${p.media_url}" muted playsinline></video><div class="play-overlay"><span class="ring"><svg class="icon"><use href="#i-play"/></svg></span></div></div>`
     : `<div class="media" style="background-image:url('${p.media_url || ''}')"></div>`;
   return `
     <article class="card" data-id="${p.id}" tabindex="0">
       ${media}
       <div class="body">
-        <div class="eyebrow">${cat ? cat.icon + ' ' + cat.label : ''}</div>
+        <div class="meta-row"><span class="tag" style="background:${catColorVar(p)}; color:#fff;">${p.categories?.label || ''}</span><span class="date">${fmtDate(p.published_at)}</span></div>
         <h2>${escapeHtml(p.title)}</h2>
         <p class="excerpt">${escapeHtml(p.excerpt || '')}</p>
         <div class="row">
-          <button class="readmore" data-open="${p.id}">Læs mere →</button>
+          <button class="readmore" data-open="${p.id}">Læs mere <svg class="icon"><use href="#i-arrow"/></svg></button>
           <div class="card-actions">
-            <button class="icon-btn" data-fav="${p.id}" aria-label="Gem som favorit">${favoriteIds.has(p.id) ? '★' : '☆'}</button>
-            <button class="icon-btn" data-share="${p.id}" aria-label="Del">↗</button>
+            <button class="circle-btn" data-fav="${p.id}" aria-label="Gem som favorit"><svg class="icon"><use href="#${favoriteIds.has(p.id) ? 'i-heart-fill' : 'i-heart'}"/></svg></button>
+            <button class="circle-btn" data-share="${p.id}" aria-label="Del"><svg class="icon"><use href="#i-share"/></svg></button>
           </div>
         </div>
       </div>
     </article>`;
 }
-
 function renderFeed(){
   const filtered = activeCategory === 'alle' ? posts : posts.filter(p => p.categories?.slug === activeCategory);
-  paintFeed('feedHome', filtered);
+  paintFeed('feedHome', filtered.slice(0,10));
   paintFeed('feedNyt', posts.filter(p => p.categories?.slug === 'nyheder'));
-  paintFeed('feedKalender', posts.filter(p => p.categories?.slug === 'arrangementer'));
-  paintFeed('feedVideo', posts.filter(p => p.media_type === 'video'));
   paintFeed('feedFavoritter', posts.filter(p => favoriteIds.has(p.id)));
 }
-
 function paintFeed(elId, list){
   const el = document.getElementById(elId);
-  if (!list.length){
-    el.innerHTML = `<div class="empty-state"><div class="glyph">🗂️</div><p>Intet indhold endnu.</p></div>`;
-    return;
-  }
+  if (!list.length){ el.innerHTML = `<div class="empty-state"><svg class="icon"><use href="#i-doc"/></svg><p>Intet indhold endnu.</p></div>`; return; }
   el.innerHTML = list.map(cardHtml).join('');
-  observeCards(el);
-  bindCardEvents(el);
+  observeCards(el); bindCardEvents(el);
 }
-
 function observeCards(container){
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });
-  }, { threshold: .12 });
+  const io = new IntersectionObserver((entries) => entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } }), { threshold:.12 });
   container.querySelectorAll('.card').forEach(c => io.observe(c));
 }
-
 function bindCardEvents(container){
   container.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openPost(b.dataset.open)));
   container.querySelectorAll('.card').forEach(c => c.addEventListener('click', (e) => { if (!e.target.closest('button')) openPost(c.dataset.id); }));
@@ -631,7 +731,44 @@ function bindCardEvents(container){
   container.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); sharePost(b.dataset.share); }));
 }
 
-function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+/* ---- Video-univers ---- */
+function renderVideoHub(){
+  const videos = posts.filter(p => p.media_type === 'video');
+  const hero = document.getElementById('videoHero');
+  const list = document.getElementById('videoList');
+  if (!videos.length){ hero.innerHTML = ''; list.innerHTML = `<div class="empty-state"><svg class="icon"><use href="#i-play"/></svg><p>Ingen videoer endnu.</p></div>`; return; }
+  const [first, ...rest] = videos;
+  hero.dataset.id = first.id;
+  hero.innerHTML = `<video src="${first.media_url}" muted playsinline></video><div class="scrim"></div>
+    <div class="center-play"><span class="ring"><svg class="icon"><use href="#i-play"/></svg></span></div>
+    <div class="info"><h2>${escapeHtml(first.title)}</h2><div class="meta">${fmtDate(first.published_at)}</div></div>`;
+  hero.addEventListener('click', () => openPost(first.id));
+  list.innerHTML = rest.map(p => `
+    <button class="video-row" data-open="${p.id}">
+      <div class="thumb"><video src="${p.media_url}" muted playsinline></video><div class="mini-play"><svg class="icon"><use href="#i-play"/></svg></div></div>
+      <div><div class="t">${escapeHtml(p.title)}</div><div class="s">${fmtDate(p.published_at)}</div></div>
+    </button>`).join('');
+  list.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openPost(b.dataset.open)));
+}
+
+/* ---- Kalender: kortgrid ---- */
+function renderEvents(){
+  const events = posts.filter(p => p.event_date).sort((a,b) => new Date(a.event_date)-new Date(b.event_date));
+  const el = document.getElementById('eventGrid');
+  if (!events.length){ el.innerHTML = `<div class="empty-state"><svg class="icon"><use href="#i-calendar"/></svg><p>Ingen arrangementer planlagt.</p></div>`; return; }
+  el.innerHTML = events.map(p => {
+    const d = new Date(p.event_date);
+    return `<article class="event-card" data-id="${p.id}">
+      <div class="datebadge" style="background:${catColorVar(p)};"><span class="d">${d.getDate()}</span><span class="m">${d.toLocaleDateString('da-DK',{month:'short'})}</span></div>
+      <div class="info">
+        <div class="t">${escapeHtml(p.title)}</div>
+        ${p.event_time ? `<div class="row2"><svg class="icon"><use href="#i-clock"/></svg>${escapeHtml(p.event_time)}</div>` : ''}
+        ${p.event_location ? `<div class="row2"><svg class="icon"><use href="#i-pin"/></svg>${escapeHtml(p.event_location)}</div>` : ''}
+      </div>
+    </article>`;
+  }).join('');
+  el.querySelectorAll('.event-card').forEach(c => c.addEventListener('click', () => openPost(c.dataset.id)));
+}
 
 /* ============================================================
    POST-DETALJE
@@ -644,9 +781,9 @@ async function openPost(id){
     ? `<video class="hero-media" src="${p.media_url}" controls playsinline></video>`
     : `<img class="hero-media" src="${p.media_url || ''}" alt="">`;
   document.getElementById('sheetTitle').textContent = p.title;
-  document.getElementById('sheetMeta').textContent = `${p.categories?.label || ''} · ${p.profiles?.full_name || 'Redaktionen'} · ${new Date(p.published_at).toLocaleDateString('da-DK')}`;
+  document.getElementById('sheetMeta').innerHTML = `<span class="tag" style="background:${catColorVar(p)}; color:#fff;">${p.categories?.label || ''}</span> ${p.profiles?.full_name || 'Redaktionen'} · ${fmtDate(p.published_at)}`;
   document.getElementById('sheetBody').innerHTML = (p.body || p.excerpt || '').split('\n').map(l => `<p>${escapeHtml(l)}</p>`).join('');
-  document.getElementById('favBtn').textContent = favoriteIds.has(p.id) ? '★' : '☆';
+  document.getElementById('favBtn').querySelector('use').setAttribute('href', favoriteIds.has(p.id) ? '#i-heart-fill' : '#i-heart');
   await renderComments(p);
   document.getElementById('postSheet').classList.add('open');
 }
@@ -656,43 +793,32 @@ document.getElementById('shareBtn').addEventListener('click', () => currentPost 
 
 async function renderComments(p){
   const wrap = document.getElementById('sheetComments');
-  if (!p.comments_enabled){ wrap.innerHTML = ''; return; }
+  if (!p.comments_enabled || CFG.features?.comments === false){ wrap.innerHTML = ''; return; }
   const { data } = await supabase.from('comments').select('*, profiles(full_name)').eq('post_id', p.id).order('created_at');
-  wrap.innerHTML = `<h3 style="font-size:14px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-bottom:10px;">Kommentarer</h3>` +
+  wrap.innerHTML = `<h3>Kommentarer</h3>` +
     (data || []).map(c => `<div class="comment"><div class="who">${escapeHtml(c.profiles?.full_name || 'Bruger')}</div>${escapeHtml(c.body)}</div>`).join('') +
-    (session ? `<form class="comment-form" id="commentForm"><input type="text" id="commentInput" placeholder="Skriv en kommentar…" required><button class="icon-btn" type="submit" aria-label="Send">➤</button></form>` : `<p style="font-size:13px; color:var(--ink-soft); margin-top:10px;">Log ind for at kommentere.</p>`);
+    (session ? `<form class="comment-form" id="commentForm"><input type="text" id="commentInput" placeholder="Skriv en kommentar…" required><button type="submit" aria-label="Send"><svg class="icon" style="width:16px;height:16px;color:#fff;"><use href="#i-arrow"/></svg></button></form>` : `<p style="font-size:13px; color:var(--ink-soft); margin-top:10px;">Log ind for at kommentere.</p>`);
   const form = document.getElementById('commentForm');
   if (form) form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const body = document.getElementById('commentInput').value.trim();
     if (!body) return;
     await supabase.from('comments').insert({ post_id: p.id, author_id: session.user.id, body });
-    document.getElementById('commentInput').value = '';
-    renderComments(p);
+    document.getElementById('commentInput').value = ''; renderComments(p);
   });
 }
 
 /* ============================================================
-   FAVORITTER
+   FAVORITTER / DELING
    ============================================================ */
-async function loadFavorites(){
-  if (!session) { favoriteIds = new Set(); return; }
-  const { data } = await supabase.from('favorites').select('post_id').eq('user_id', session.user.id);
-  favoriteIds = new Set((data || []).map(f => f.post_id));
-}
+async function loadFavorites(){ if (!session) { favoriteIds = new Set(); return; } const { data } = await supabase.from('favorites').select('post_id').eq('user_id', session.user.id); favoriteIds = new Set((data||[]).map(f=>f.post_id)); }
 async function toggleFavorite(id, fromSheet){
   if (!session) return openModal('authBackdrop');
-  if (favoriteIds.has(id)){
-    favoriteIds.delete(id);
-    await supabase.from('favorites').delete().eq('user_id', session.user.id).eq('post_id', id);
-  } else {
-    favoriteIds.add(id);
-    await supabase.from('favorites').insert({ user_id: session.user.id, post_id: id });
-  }
-  if (fromSheet) document.getElementById('favBtn').textContent = favoriteIds.has(id) ? '★' : '☆';
+  if (favoriteIds.has(id)){ favoriteIds.delete(id); await supabase.from('favorites').delete().eq('user_id', session.user.id).eq('post_id', id); }
+  else { favoriteIds.add(id); await supabase.from('favorites').insert({ user_id: session.user.id, post_id: id }); }
+  if (fromSheet) document.getElementById('favBtn').querySelector('use').setAttribute('href', favoriteIds.has(id) ? '#i-heart-fill' : '#i-heart');
   renderFeed();
 }
-
 function sharePost(id){
   const p = posts.find(x => String(x.id) === String(id));
   const url = `${location.origin}${location.pathname}#post-${id}`;
@@ -720,19 +846,17 @@ function showView(name){
   document.getElementById('view-' + name).classList.add('active');
   document.querySelectorAll('nav.tabbar button').forEach(b => b.removeAttribute('aria-current'));
   const navBtn = document.querySelector(`nav.tabbar button[data-view="${name}"]`);
-  if (navBtn) navBtn.setAttribute('aria-current', 'page');
+  if (navBtn) navBtn.setAttribute('aria-current','page');
   document.getElementById('main').scrollTo(0,0);
 }
-document.querySelectorAll('nav.tabbar button').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
+document.getElementById('tabbar').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) showView(b.dataset.view); });
 document.getElementById('goFavoritter').addEventListener('click', () => showView('favoritter'));
-document.getElementById('goKontakt').addEventListener('click', () => { showView('mere'); toast('Kontakt: info@eksempel.dk'); });
-document.getElementById('goInformation').addEventListener('click', () => toast('Bygget af Nordic Operations · nordicoperations.dk'));
+document.getElementById('goKontakt').addEventListener('click', () => toast(CFG.contact?.email || 'Kontakt os'));
+document.getElementById('goInformation').addEventListener('click', () => toast(CFG.brand?.footerCredit || 'Nordic Operations'));
 document.getElementById('goPrivacy').addEventListener('click', () => toast('Data behandles via Supabase (EU) i henhold til GDPR.'));
+document.getElementById('seeAllKalender').addEventListener('click', () => showView('kalender'));
 
-document.addEventListener('scroll', () => {}, true);
-document.getElementById('main').addEventListener('scroll', (e) => {
-  document.getElementById('topbar').classList.toggle('scrolled', e.target.scrollTop > 4);
-});
+document.getElementById('main').addEventListener('scroll', (e) => document.getElementById('topbar').classList.toggle('scrolled', e.target.scrollTop > 4));
 
 /* ============================================================
    MODAL HELPERS
@@ -742,65 +866,49 @@ function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-backdrop').forEach(bd => bd.addEventListener('click', (e) => { if (e.target === bd) closeModal(bd.id); }));
 
 /* ============================================================
-   NYT OPSLAG — 3-trins flow (under 1 minut)
+   NYT OPSLAG — 3-trins flow
    ============================================================ */
-let newPost = { mediaFile: null, mediaType: null, categoryId: null, commentsEnabled: true };
-
+let newPost = { mediaFile:null, mediaType:null, categoryId:null, commentsEnabled:true };
 document.getElementById('fabNew').addEventListener('click', () => {
   if (!session) return openModal('authBackdrop');
   if (!canPublish()) return toast('Din konto har ikke adgang til at publicere.');
-  resetNewPost();
-  openModal('newPostBackdrop');
+  resetNewPost(); openModal('newPostBackdrop');
 });
-
 function resetNewPost(){
-  newPost = { mediaFile: null, mediaType: null, categoryId: null, commentsEnabled: true };
+  newPost = { mediaFile:null, mediaType:null, categoryId:null, commentsEnabled:true };
   document.getElementById('mediaInput').value = '';
-  document.getElementById('uploadBox').classList.remove('has-media');
-  document.getElementById('uploadHint').textContent = 'Tryk for at vælge billede eller video';
-  document.getElementById('uploadBox').innerHTML = '<span id="uploadHint">Tryk for at vælge billede eller video</span>';
-  document.getElementById('postTitle').value = '';
-  document.getElementById('postExcerpt').value = '';
+  const box = document.getElementById('uploadBox');
+  box.classList.remove('has-media');
+  box.innerHTML = `<svg class="icon" style="width:26px;height:26px;"><use href="#i-camera"/></svg><span id="uploadHint">Tryk for at vælge billede eller video</span>`;
+  document.getElementById('postTitle').value = ''; document.getElementById('postExcerpt').value = '';
   document.getElementById('toggleComments').setAttribute('aria-checked','true');
+  document.getElementById('toStep2').disabled = true;
   document.querySelectorAll('#categoryGrid button').forEach(b => b.setAttribute('aria-pressed','false'));
   goStep(1);
 }
-
 function goStep(n){
-  document.getElementById('stepMedia').style.display = n === 1 ? '' : 'none';
-  document.getElementById('stepText').style.display = n === 2 ? '' : 'none';
-  document.getElementById('stepCategory').style.display = n === 3 ? '' : 'none';
+  document.getElementById('stepMedia').style.display = n===1 ? '' : 'none';
+  document.getElementById('stepText').style.display = n===2 ? '' : 'none';
+  document.getElementById('stepCategory').style.display = n===3 ? '' : 'none';
   ['s1','s2','s3'].forEach((id,i) => document.getElementById(id).classList.toggle('done', i < n));
 }
-
 document.getElementById('mediaInput').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  newPost.mediaFile = file;
-  newPost.mediaType = file.type.startsWith('video') ? 'video' : 'billede';
+  const file = e.target.files[0]; if (!file) return;
+  newPost.mediaFile = file; newPost.mediaType = file.type.startsWith('video') ? 'video' : 'billede';
   const url = URL.createObjectURL(file);
-  const box = document.getElementById('uploadBox');
-  box.classList.add('has-media');
+  const box = document.getElementById('uploadBox'); box.classList.add('has-media');
   box.innerHTML = newPost.mediaType === 'video' ? `<video src="${url}" muted controls></video>` : `<img src="${url}" alt="">`;
   document.getElementById('toStep2').disabled = false;
 });
 document.getElementById('toStep2').addEventListener('click', () => goStep(2));
 document.getElementById('backTo1').addEventListener('click', () => goStep(1));
-document.getElementById('toStep3').addEventListener('click', () => {
-  if (!document.getElementById('postTitle').value.trim()) return toast('Skriv en overskrift');
-  goStep(3);
-});
+document.getElementById('toStep3').addEventListener('click', () => { if (!document.getElementById('postTitle').value.trim()) return toast('Skriv en overskrift'); goStep(3); });
 document.getElementById('backTo2').addEventListener('click', () => goStep(2));
-document.getElementById('toggleComments').addEventListener('click', (e) => {
-  const on = e.target.getAttribute('aria-checked') === 'true';
-  e.target.setAttribute('aria-checked', String(!on));
-  newPost.commentsEnabled = !on;
-});
+document.getElementById('toggleComments').addEventListener('click', (e) => { const on = e.target.getAttribute('aria-checked')==='true'; e.target.setAttribute('aria-checked', String(!on)); newPost.commentsEnabled = !on; });
 
 document.getElementById('publishBtn').addEventListener('click', async () => {
   if (!newPost.categoryId) return toast('Vælg en kategori');
-  const btn = document.getElementById('publishBtn');
-  btn.disabled = true; btn.textContent = 'Udgiver…';
+  const btn = document.getElementById('publishBtn'); btn.disabled = true; btn.textContent = 'Udgiver…';
   try {
     let mediaUrl = null;
     if (newPost.mediaFile){
@@ -813,82 +921,59 @@ document.getElementById('publishBtn').addEventListener('click', async () => {
     }
     const status = profile.role === 'bidragyder' ? 'afventer' : 'udgivet';
     const { error } = await supabase.from('posts').insert({
-      author_id: session.user.id,
-      category_id: newPost.categoryId,
+      author_id: session.user.id, category_id: newPost.categoryId,
       title: document.getElementById('postTitle').value.trim(),
       excerpt: document.getElementById('postExcerpt').value.trim(),
       body: document.getElementById('postExcerpt').value.trim(),
-      media_url: mediaUrl,
-      media_type: newPost.mediaType,
-      comments_enabled: newPost.commentsEnabled,
-      status,
+      media_url: mediaUrl, media_type: newPost.mediaType,
+      comments_enabled: newPost.commentsEnabled, status,
       published_at: status === 'udgivet' ? new Date().toISOString() : null
     });
     if (error) throw error;
     closeModal('newPostBackdrop');
     toast(status === 'udgivet' ? 'Opslag udgivet' : 'Sendt til godkendelse');
     loadPosts();
-  } catch (err){
-    console.error(err);
-    toast('Kunne ikke udgive — prøv igen');
-  } finally {
-    btn.disabled = false; btn.textContent = 'Udgiv';
-  }
+  } catch (err){ console.error(err); toast('Kunne ikke udgive — prøv igen'); }
+  finally { btn.disabled = false; btn.innerHTML = '<svg class="icon" style="width:17px;height:17px;"><use href="#i-check"/></svg> Udgiv'; }
 });
 
 /* ============================================================
-   ADMIN-PANEL
+   ADMIN
    ============================================================ */
 async function loadAdmin(){
   if (!canModerate()) return;
   const { data: statRows } = await supabase.from('post_stats').select('*');
-  const totals = (statRows || []).reduce((acc, r) => ({ udgivet: acc.udgivet + (r.udgivet||0), afventer: acc.afventer + (r.afventer||0), planlagt: acc.planlagt + (r.planlagt||0) }), { udgivet:0, afventer:0, planlagt:0 });
+  const totals = (statRows||[]).reduce((a,r) => ({ udgivet:a.udgivet+(r.udgivet||0), afventer:a.afventer+(r.afventer||0), planlagt:a.planlagt+(r.planlagt||0) }), { udgivet:0, afventer:0, planlagt:0 });
   document.getElementById('adminStats').innerHTML = `
-    <div class="stat-card"><div class="n">${totals.udgivet}</div><div class="l">Udgivne opslag</div></div>
-    <div class="stat-card"><div class="n">${totals.afventer}</div><div class="l">Afventer godkendelse</div></div>
+    <div class="stat-card"><div class="n">${totals.udgivet}</div><div class="l">Udgivne</div></div>
+    <div class="stat-card"><div class="n">${totals.afventer}</div><div class="l">Afventer</div></div>
     <div class="stat-card"><div class="n">${totals.planlagt}</div><div class="l">Planlagte</div></div>
     <div class="stat-card"><div class="n">${favoriteIds.size}</div><div class="l">Dine favoritter</div></div>`;
-
   const { data: pending } = await supabase.from('posts').select('*, profiles(full_name)').eq('status','afventer').order('created_at');
-  document.getElementById('adminPending').innerHTML = (pending || []).map(p => `
+  document.getElementById('adminPending').innerHTML = (pending||[]).map(p => `
     <div class="admin-row">
-      <div class="txt" style="flex:1;"><div class="t" style="font-weight:600;">${escapeHtml(p.title)}</div><div class="s" style="font-size:12.5px; color:var(--ink-soft);">${escapeHtml(p.profiles?.full_name || '')}</div></div>
-      <span class="status-pill afventer">Afventer</span>
-      <button class="icon-btn" data-approve="${p.id}" aria-label="Godkend">✓</button>
-      <button class="icon-btn" data-reject="${p.id}" aria-label="Afvis">✕</button>
-    </div>`).join('') || `<p style="padding:0 16px; color:var(--ink-soft); font-size:13.5px;">Ingen opslag afventer godkendelse.</p>`;
-
-  document.querySelectorAll('[data-approve]').forEach(b => b.addEventListener('click', async () => {
-    await supabase.from('posts').update({ status:'udgivet', published_at: new Date().toISOString() }).eq('id', b.dataset.approve);
-    toast('Opslag godkendt'); loadAdmin(); loadPosts();
-  }));
-  document.querySelectorAll('[data-reject]').forEach(b => b.addEventListener('click', async () => {
-    await supabase.from('posts').update({ status:'skjult' }).eq('id', b.dataset.reject);
-    toast('Opslag afvist'); loadAdmin();
-  }));
+      <div class="txt" style="flex:1;"><div class="t" style="font-weight:700;">${escapeHtml(p.title)}</div><div class="s" style="font-size:12.5px; color:var(--ink-soft);">${escapeHtml(p.profiles?.full_name||'')}</div></div>
+      <button class="circle-btn" data-approve="${p.id}" aria-label="Godkend"><svg class="icon" style="width:16px;height:16px;"><use href="#i-check"/></svg></button>
+      <button class="circle-btn" data-reject="${p.id}" aria-label="Afvis"><svg class="icon" style="width:16px;height:16px;"><use href="#i-x"/></svg></button>
+    </div>`).join('') || `<p style="padding:0 20px; color:var(--ink-soft); font-size:13.5px;">Ingen opslag afventer godkendelse.</p>`;
+  document.querySelectorAll('[data-approve]').forEach(b => b.addEventListener('click', async () => { await supabase.from('posts').update({ status:'udgivet', published_at:new Date().toISOString() }).eq('id', b.dataset.approve); toast('Opslag godkendt'); loadAdmin(); loadPosts(); }));
+  document.querySelectorAll('[data-reject]').forEach(b => b.addEventListener('click', async () => { await supabase.from('posts').update({ status:'skjult' }).eq('id', b.dataset.reject); toast('Opslag afvist'); loadAdmin(); }));
 
   if (isAdmin()){
     const { data: users } = await supabase.from('profiles').select('*').order('created_at');
-    document.getElementById('adminUsers').innerHTML = (users || []).map(u => `
-      <div class="admin-row">
-        <div class="txt" style="flex:1;"><div class="t" style="font-weight:600;">${escapeHtml(u.full_name || u.id.slice(0,8))}</div></div>
-        <select class="role-select" data-user="${u.id}">
-          <option value="bidragyder" ${u.role==='bidragyder'?'selected':''}>Bidragyder</option>
-          <option value="redaktoer" ${u.role==='redaktoer'?'selected':''}>Redaktør</option>
-          <option value="administrator" ${u.role==='administrator'?'selected':''}>Administrator</option>
-        </select>
-      </div>`).join('');
-    document.querySelectorAll('.role-select').forEach(sel => sel.addEventListener('change', async () => {
-      await supabase.from('profiles').update({ role: sel.value }).eq('id', sel.dataset.user);
-      toast('Rolle opdateret');
-    }));
-  } else {
-    document.getElementById('adminUsers').innerHTML = `<p style="padding:0 16px; color:var(--ink-soft); font-size:13.5px;">Kun administratorer kan ændre roller.</p>`;
-  }
+    document.getElementById('adminUsers').innerHTML = (users||[]).map(u => `
+      <div class="admin-row"><div class="txt" style="flex:1;"><div class="t" style="font-weight:700;">${escapeHtml(u.full_name || u.id.slice(0,8))}</div></div>
+      <select class="role-select" data-user="${u.id}">
+        <option value="bidragyder" ${u.role==='bidragyder'?'selected':''}>Bidragyder</option>
+        <option value="redaktoer" ${u.role==='redaktoer'?'selected':''}>Redaktør</option>
+        <option value="administrator" ${u.role==='administrator'?'selected':''}>Administrator</option>
+      </select></div>`).join('');
+    document.querySelectorAll('.role-select').forEach(sel => sel.addEventListener('change', async () => { await supabase.from('profiles').update({ role: sel.value }).eq('id', sel.dataset.user); toast('Rolle opdateret'); }));
+  } else document.getElementById('adminUsers').innerHTML = `<p style="padding:0 20px; color:var(--ink-soft); font-size:13.5px;">Kun administratorer kan ændre roller.</p>`;
 }
 
 /* ============================================================
-   PUSH-NOTIFIKATIONER (klient-del)
+   PUSH-NOTIFIKATIONER
    ============================================================ */
 const pushToggle = document.getElementById('togglePush');
 pushToggle.addEventListener('click', async () => {
@@ -898,27 +983,32 @@ pushToggle.addEventListener('click', async () => {
   if (on){ pushToggle.setAttribute('aria-checked','false'); return toast('Notifikationer slået fra'); }
   const perm = await Notification.requestPermission();
   if (perm !== 'granted') return toast('Tilladelse ikke givet');
-  if (!CONFIG.VAPID_PUBLIC_KEY) return toast('Push kræver VAPID-opsætning (se SETUP.md)');
+  if (!CFG.supabase?.vapidPublicKey) return toast('Push kræver VAPID-opsætning (se SETUP.md)');
   const reg = await navigator.serviceWorker.ready;
-  const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(CONFIG.VAPID_PUBLIC_KEY) });
+  const sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: urlBase64ToUint8Array(CFG.supabase.vapidPublicKey) });
   const json = sub.toJSON();
   await supabase.from('push_subscriptions').upsert({ user_id: session.user.id, endpoint: json.endpoint, p256dh: json.keys.p256dh, auth_key: json.keys.auth });
-  pushToggle.setAttribute('aria-checked','true');
-  toast('Notifikationer slået til');
+  pushToggle.setAttribute('aria-checked','true'); toast('Notifikationer slået til');
 });
 function urlBase64ToUint8Array(base64String){
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/-/g,'+').replace(/_/g,'/');
-  const raw = atob(base64);
-  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+  const raw = atob(base64); return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+/* ============================================================
+   REALTIME
+   ============================================================ */
+if (CFG.features?.realtime !== false){
+  supabase.channel('posts-realtime')
+    .on('postgres_changes', { event:'*', schema:'public', table:'posts' }, () => { loadPosts(); if (canModerate()) loadAdmin(); })
+    .subscribe();
 }
 
 /* ============================================================
    SERVICE WORKER
    ============================================================ */
-if ('serviceWorker' in navigator){
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
-}
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 
 /* ============================================================
    INIT
