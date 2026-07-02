@@ -1,31 +1,16 @@
 {
-  "name": "Nordic Info",
-  "short_name": "Nordic Info",
-  "description": "Informationsplatform bygget af Nordic Operations",
-  "start_url": "./",
-  "scope": "./",
+  "name": "Nordic Media",
+  "short_name": "Nordic Media",
+  "description": "Nyt der betyder noget — bygget af Nordic Operations",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FAFAF7",
-  "theme_color": "#28513F",
+  "background_color": "#F3F5FA",
+  "theme_color": "#0F1B3D",
   "icons": [
-    {
-      "src": "./icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icon-maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
