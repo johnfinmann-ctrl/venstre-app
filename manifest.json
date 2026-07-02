@@ -1,16 +1,42 @@
 {
+  "id": "/venstre-app/",
   "name": "Venstre Syddjurs",
-  "short_name": "Venstre Syddjurs",
-  "description": "Din fremtid. Dine valg. — nyheder og arrangementer fra Venstre Syddjurs",
-  "start_url": "/index.html?org=venstre-syddjurs",
-  "scope": "/",
+  "short_name": "Venstre",
+  "description": "Informationsapp for Venstre Syddjurs",
+  "start_url": "./?pwa=1",
+  "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen",
+    "minimal-ui"
+  ],
   "orientation": "portrait",
-  "background_color": "#F3F5FA",
-  "theme_color": "#254264",
+  "background_color": "#F7F8FC",
+  "theme_color": "#2435D5",
+  "categories": [
+    "news",
+    "politics",
+    "productivity"
+  ],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

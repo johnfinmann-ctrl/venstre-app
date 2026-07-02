@@ -1,63 +1,47 @@
-# Venstre Syddjurs — app-opsætning
+# Nordic Info — opsætning
 
-Bygget på Nordic Media Engine (multi-tenant-klar arkitektur), men denne leverance
-kører kun med **Venstre Syddjurs** som organisation. Intet "opret kunde"-flow og
-ingen white-label admin-UI i denne version — det kan bygges senere uden at
-lave databasen om, se afsnittet "Klar til flere organisationer" nederst.
+## 1. Supabase (backend)
+1. Opret projekt på supabase.com (vælg EU-region af hensyn til GDPR).
+2. Kør `supabase-schema.sql` i SQL Editor.
+3. Under **Authentication → Providers**: aktiver "Email" med magic link (OTP).
+4. Under **Authentication → URL Configuration**: sæt din GitHub Pages-URL som redirect.
+5. Kopiér Project URL og anon key ind i `index.html` (`CONFIG.SUPABASE_URL` / `SUPABASE_ANON_KEY`).
 
-## 1. Supabase
-1. Opret ét Supabase-projekt (EU-region).
-2. Kør `supabase-schema.sql`. Den opretter hele hierarkiet og seeder
-   organisationen "Venstre Syddjurs" (slug `venstre-syddjurs`) med Venstre-farver
-   (dyb navy #254264, blå #1D4ED8) og kategorierne Nyheder, Politik,
-   Arrangementer, Video, Information.
-3. **Authentication → Providers**: aktiver "Email" (magic link/OTP).
-4. **Authentication → URL Configuration**: sæt jeres live-URL som redirect.
-5. Kopiér Project URL og anon key ind i `config.js`.
+## 2. Push-notifikationer (valgfrit, kræver ekstra trin)
+Denne fil kan **modtage** push (service worker er klar), men **afsendelse** kræver en
+server-nøgle der aldrig må ligge i frontend. Løsning:
+1. Generér VAPID-nøglepar (`npx web-push generate-vapid-keys`).
+2. Læg den offentlige nøgle i `CONFIG.VAPID_PUBLIC_KEY`.
+3. Opret en Supabase Edge Function der læser `push_subscriptions`-tabellen og sender
+   via `web-push` med den private nøgle, når et opslag udgives (fx trigger på insert).
+   Denne funktion er ikke inkluderet — sig til, så bygger jeg den.
 
-## 2. Ret branding om nødvendigt
-Farver/navn/logo ligger i databasen, ikke i koden:
-```sql
-update organizations set
-  logo_url = 'https://.../venstre-logo.png',
-  colors = colors || '{"primary":"#1D4ED8"}'::jsonb
-where slug = 'venstre-syddjurs';
-```
+## 3. Ikoner og QR
+- Læg `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` i samme mappe (192×192 og 512×512 px, PNG).
+- Generér installations-QR på goqr.me, der peger på din live-URL.
 
-## 3. Roller — hvem gør hvad
+## 4. Deploy
+- GitHub Pages: push `index.html`, `sw.js`, `manifest.json` + ikoner til repo, aktivér Pages.
+- Test **altid** på rigtig mobil/Safari — ikke kun i preview.
+
+## Roller
 | Rolle | Kan |
 |---|---|
-| Administrator | Alt: tildele roller, redigere/skjule alt indhold, se statistik |
-| Redaktør | Publicere direkte, godkende/afvise bidrag fra bidragydere |
-| Bidragyder | Indsende opslag → sendes til godkendelse hos redaktør/administrator |
-| Moderator | Slette/moderere kommentarer (til fx frivillige der styrer debattonen) |
+| Bidragyder | Oprette opslag → status "afventer", synlig for redaktør/admin |
+| Redaktør | Publicere direkte, godkende/afvise bidrag, redigere/skjule opslag |
+| Administrator | Alt ovenstående + tildele roller, se statistik |
 
-Flere redaktører kan arbejde samtidig — der er ingen "lås" på opslag, og
-feedet opdateres i realtid for alle når nogen udgiver eller retter noget.
+## Hvad er reelt funktionelt nu
+- Multi-bruger login (magic link), roller, RLS på alle tabeller ✅
+- Feed, kategorier, søgning, favoritter, kommentarer (til/fra pr. opslag) ✅
+- 3-trins publiceringsflow med billede/video-upload til Supabase Storage ✅
+- Admin: godkend/afvis, rolletildeling, statistik ✅
+- Offline: udgivne opslag caches i IndexedDB og vises hvis netværket fejler ✅
+- Dark/light mode, WCAG-fokusringe, skip-link, aria-roller ✅
 
-Tildel roller: **Adminpanel → Brugere og roller** (kræver administrator-adgang).
-Første bruger skal sættes til `administrator` manuelt i Supabase (Table Editor
-→ `profiles` → sæt `role` og `org_id` på jeres egen konto), da der ingen
-superadmin-onboarding er i denne version.
-
-## 4. Funktioner med i denne udgave
-Feed med hero-karrusel og "Det sker"-sektion, eget video-univers med
-autoplay-preview, kalenderkort (ikke liste), 3-trins publiceringsflow under
-1 minut, søgning, likes + bogmærker (adskilte), kommentarer (til/fra pr.
-opslag), realtime, offline-cache, dark/light mode, adminpanel med statistik,
-godkendelser og kommentar-moderation.
-
-## 5. Push, ikoner, QR, deploy
-- Push kræver VAPID-nøglepar + en Supabase Edge Function til afsendelse
-  (`npx web-push generate-vapid-keys`, offentlig nøgle i `config.js`).
-- Læg `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` (Venstre-logo,
-  PNG) i mappen.
-- QR til installation: goqr.me, pegende på jeres live-URL.
-- GitHub Pages eller Netlify. Test altid på rigtig mobil/Safari.
-
-## Klar til flere organisationer senere
-Databasen er allerede bygget som ægte multi-tenant (RLS pr. `org_id`, 5 roller,
-afdelinger/teams-tabeller). Skal I fx senere køre en tilsvarende app for en
-anden lokalforening, tilføjes den med en ny `organizations`-række (se
-`nordic-media-v2`-leverancen for den fulde forklaring) — kildekoden i
-`index.html` skal ikke ændres, kun konfiguration og data.
+## Hvad kræver mere arbejde
+- Push-afsendelse (Edge Function, se ovenfor)
+- Planlagte opslag (`scheduled_at` findes i skemaet, men der er endnu ingen cron/Edge
+  Function der rent faktisk skifter status fra "planlagt" til "udgivet" på tidspunktet)
+- Billedkomprimering før upload (uploades i fuld størrelse i dag)
+- Ikonfiler (192/512/maskable) — skal laves i klientens eget branding
