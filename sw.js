@@ -3,8 +3,8 @@
 // App-shell caching + offline fallback + push-notifikationer
 // ============================================================
 
-const CACHE_VERSION = 'nordic-media-v1';
-const APP_SHELL = ['./', './index.html', './config.js', './manifest.json'];
+const CACHE_VERSION = 'venstre-syddjurs-v1';
+const APP_SHELL = ['./', './index.html', './index.html?org=venstre-syddjurs', './config.js', './manifest.json'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(APP_SHELL)));
